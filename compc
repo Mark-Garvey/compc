@@ -1,0 +1,79 @@
+#!/bin/bash
+
+#compc uses gcc/g++ to compile single .c and .cpp files easy and fast.
+#change your following gcc and g++ argument setups below...
+# /!\ do not add -g for debugger. -g is an argument for compc. /!\
+#
+	#c arguments
+	GCC_C="gcc -m32 -std=gnu11 -Wall"
+	
+	#cpp arguments
+	GCC_CPP="g++"
+	
+
+#Do not change content below. Unless you know what you're doing.
+FLAG=false
+MAXarg=$3	# Max Arguments=(Number-1)
+FULLNAME=$1	# file name
+
+#check if file exists
+if [ ! -f "$FULLNAME" ]; then
+	echo 'compc: file does not exist'
+	exit 1
+fi
+
+
+#argument handling
+if [ $MAXarg ]; then
+	echo 'compc: too many args'
+	exit 1
+	#
+elif [ $FULLNAME ]; then	
+	if [ "$(echo "$FULLNAME" | grep -o '.cpp' )" = '.cpp' ]; then
+                FLAG=true
+                NAME=$(echo "$FULLNAME" | cut -d '.' -f 1)
+                GCC=$GCC_CPP
+                #
+	elif [ "$(echo "$FULLNAME" | grep -o '.c')" = '.c' ]; then
+		FLAG=true
+		NAME=$(echo "$FULLNAME" | cut -d '.' -f 1)
+		GCC=$GCC_C
+		#
+	else
+		echo 'compc: first arg not a file of type .c or .cpp'
+		exit 1
+		#
+	fi
+	#
+else
+	echo 'compc: required args'		
+	exit 1
+	#
+fi
+
+
+#argument cases
+ARG=''
+case "$2" in
+	'')
+		#no arguments
+		;;
+	-g)
+		ARG='-g' 
+		;;
+	 *)
+		echo "compc: argument not found"
+		exit 1
+		;;
+esac		
+
+
+#compile using gcc
+if [ $FLAG = true ]; then
+	$GCC $ARG $FULLNAME -o $NAME
+	echo "compc: $FULLNAME compiled"
+	exit 2
+	#
+fi
+
+#compc created by Mark Garvey
