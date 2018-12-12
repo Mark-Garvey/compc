@@ -68,12 +68,25 @@ case "$2" in
 esac		
 
 
+FAIL_COLOR="\e[91m"
+SUCCESS_COLOR="\e[92m"
+
 #compile using gcc
 if [ $FLAG = true ]; then
-	$GCC $ARG $FULLNAME -o $NAME
-	echo "compc: $FULLNAME compiled"
-	exit 2
-	#
+    #check if a file or directory already exist with name
+    if [ -d "$NAME" ]; then
+        NAME="$NAME.exe"
+        #
+    elif [ -f "$NAME" ] && [ ! -x "$NAME" ]; then
+        NAME="$NAME.exe"
+        #
+    fi
+    
+    $GCC $ARG $FULLNAME -o $NAME
+    echo "compc: $FULLNAME compiled to $NAME"
+
+	exit 0
+    #
 fi
 
 #compc created by Mark Garvey
